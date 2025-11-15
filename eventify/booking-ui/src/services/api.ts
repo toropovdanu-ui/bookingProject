@@ -88,7 +88,12 @@ class ApiService {
       return mockApiService.getEvents(pageable, from, to);
     }
     const params = new URLSearchParams();
-    params.append('pageable', JSON.stringify(pageable));
+    params.append('page', String(pageable.page));
+    params.append('size', String(pageable.size));
+    if (pageable.sort && pageable.sort.length > 0) {
+      const sortParams = pageable.sort.map(s => `${s.property},${s.direction.toLowerCase()}`).join(',');
+      params.append('sort', sortParams);
+    }
     if (from) params.append('from', from);
     if (to) params.append('to', to);
     
