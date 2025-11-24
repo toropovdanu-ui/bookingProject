@@ -1,0 +1,16 @@
+spring:
+  jpa:
+    hibernate:
+      ddl-auto: update
+  datasource:
+    url: jdbc:postgresql://localhost:5432/user_db
+    username: postgres
+    password: postgres
+    hikari:
+      schema: user_schema
+      connection-init-sql: CREATE SCHEMA IF NOT EXISTS user_schema
+      connection-timeout: 10000
+
+app:
+  jwt:
+    secret: K7mBJ4aZc8Vx0Q3rT9nY2pL1sD6fGhN8kW5eR2tX7vC9bN4mQ1wE3rT6yU8iO0pA2sD5fG7hJ9kL2mN4oP6qR8
