@@ -5,8 +5,6 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
-import java.time.Instant;
-
 @Getter
 @Setter
 @NoArgsConstructor
@@ -14,7 +12,7 @@ import java.time.Instant;
 public class UpsertEventRequest {
     private String title;
     private String description;
-    private Instant dateTime;
+    private String dateTime;
     private int totalTickets;
     private String coverUrl;
 }

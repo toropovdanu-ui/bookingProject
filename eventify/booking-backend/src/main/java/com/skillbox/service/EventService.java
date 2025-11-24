@@ -47,7 +47,17 @@ public class EventService {
     }
 
     @Transactional
-    public EventResponse updateEvent(UpsertEventRequest request){
+    public EventResponse updateEvent(Long eventId,UpsertEventRequest request){
+        EventEntity eventEntity = eventRepository.findById(eventId)
+                .orElseThrow(() -> new EventNotFoundException("Ошибка! Мероприятие не найдено!"));
 
+        eventEntity.updateFrom(request);
+
+        return eventMapper.toDto(eventEntity);
+    }
+
+    @Transactional
+    public void deleteEvent(Long id){
+        eventRepository.deleteById(id);
     }
 }
