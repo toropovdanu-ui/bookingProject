@@ -15,6 +15,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Instant;
 import java.util.List;
 
 @Service
@@ -44,6 +45,17 @@ public class EventService {
                 .orElseThrow(() -> new EventNotFoundException("Ошибка! Мероприятие не найдено!"));
 
         return eventMapper.toDto(eventEntity);
+    }
+
+    @Transactional
+    public EventResponse createEvent(UpsertEventRequest request){
+        EventEntity entity = eventMapper.toEntity(request);
+
+        entity.setAvailableTickets(request.getTotalTickets());
+        entity.setCreatedAt(Instant.now());
+        entity.setUpdatedAt(Instant.now());
+
+        return eventMapper.toDto(eventRepository.save(entity));
     }
 
     @Transactional
