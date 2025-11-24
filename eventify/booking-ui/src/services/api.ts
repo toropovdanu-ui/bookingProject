@@ -90,10 +90,11 @@ class ApiService {
     const params = new URLSearchParams();
     params.append('page', String(pageable.page));
     params.append('size', String(pageable.size));
+
     if (pageable.sort && pageable.sort.length > 0) {
-      const sortParams = pageable.sort.map(s => `${s.property},${s.direction.toLowerCase()}`).join(',');
-      params.append('sort', sortParams);
+      pageable.sort.forEach(sortItem => params.append('sort', sortItem));
     }
+
     if (from) params.append('from', from);
     if (to) params.append('to', to);
     

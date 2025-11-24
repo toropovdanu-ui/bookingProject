@@ -26,7 +26,7 @@ public class BookingController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> cancelById(@PathVariable Long id){
-
+        bookingService.deleteBooking(id);
 
         return ResponseEntity.noContent().build();
     }
