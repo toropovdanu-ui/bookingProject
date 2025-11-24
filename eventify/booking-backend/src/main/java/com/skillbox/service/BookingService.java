@@ -7,6 +7,7 @@ import com.skillbox.repository.BookingRepository;
 import com.skillbox.specification.BookingSpecification;
 import com.skillbox.web.dto.booking.BookingFilterRequest;
 import com.skillbox.web.dto.booking.BookingResponse;
+import com.skillbox.web.dto.booking.UpdateBookingRequest;
 import com.skillbox.web.dto.event.EventResponse;
 import com.skillbox.web.exception.BookingNotFoundException;
 import lombok.RequiredArgsConstructor;
@@ -56,8 +57,33 @@ public class BookingService {
         return new PageImpl<>(dtos, pageable, entities.getTotalElements());
     }
 
+    @Transactional(readOnly = true)
+    public BookingResponse getById(Long id){
+        BookingEntity bookingEntity = bookingRepository.findById(id)
+                .orElseThrow(() -> new BookingNotFoundException("Ошибка! Бронирование не найдено"));
+
+        BookingResponse bookingDto = bookingMapper.toDto(bookingEntity);
+        EventResponse eventDto = eventMapper.toDto(bookingEntity.getEvent());
+
+        bookingDto.setEvent(eventDto);
+        bookingDto.setCustomerEmail(bookingEntity.getUser().getEmail());
+
+        return bookingDto;
+    }
+
+    @Transactional
+    public BookingResponse updateById(Long id,UpdateBookingRequest request){
+        BookingEntity bookingEntity = bookingRepository.findById(id)
+                .orElseThrow(() -> new BookingNotFoundException("Ошибка! Бронирование не найдено"));
+
+        bookingEntity.setTicketCount(request.getTicketCount());
+
+        return bookingMapper.toDto(bookingEntity);
+    }
+
     @Transactional
     public void deleteBooking(Long id){
         bookingRepository.deleteById(id);
     }
+
 }
