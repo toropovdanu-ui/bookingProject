@@ -2,7 +2,7 @@ package com.skillbox.web.contoller;
 
 import com.skillbox.service.AuthService;
 import com.skillbox.web.dto.user.AuthUserResponse;
-import com.skillbox.web.dto.user.CredentialUserRequest;
+import com.skillbox.web.dto.user.UserCredentialRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -17,7 +17,7 @@ public class AuthController {
     private final AuthService authService;
 
     @PostMapping("/register")
-    public ResponseEntity<AuthUserResponse> register(@RequestBody CredentialUserRequest request){
+    public ResponseEntity<AuthUserResponse> register(@RequestBody UserCredentialRequest request){
 
     }
 }
