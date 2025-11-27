@@ -52,11 +52,8 @@ const NotificationSettings: React.FC = () => {
     try {
       setSaving(true);
       await apiService.deleteNotificationPreferences();
-      setPreferences({
-        notifyNewEvents: false,
-        notifyUpcoming: false,
-        notifyBeforeHours: 24,
-      });
+      // Перезагружаем настройки с бэка, чтобы получить правильные дефолтные значения
+      await loadPreferences();
       toast.success('Настройки уведомлений сброшены');
     } catch (error) {
       console.error('Error resetting preferences:', error);

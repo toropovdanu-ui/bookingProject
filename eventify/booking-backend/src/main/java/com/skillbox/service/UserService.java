@@ -28,6 +28,10 @@ public class UserService {
     @Transactional
     public NotificationSettingsResponse updateUserNotifications(Long userId,
                                                                 UpdateNotificationSettingsRequest request){
+        if(request.getNotifyUpcoming() && request.getNotifyBeforeHours() == null){
+            throw new IllegalArgumentException("При включённом уведомлении о предстоящих событиях необходимо указать количество часов");
+        }
+
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Ошибка! Зайдите в аккаунт еще раз!"));
 

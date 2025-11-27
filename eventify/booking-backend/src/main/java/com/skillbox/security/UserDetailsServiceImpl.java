@@ -1,6 +1,8 @@
 package com.skillbox.security;
 
+import com.skillbox.entity.UserEntity;
 import com.skillbox.repository.UserRepository;
+import com.skillbox.web.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -14,6 +16,9 @@ public class UserDetailsServiceImpl implements UserDetailsService {
 
     @Override
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return null;
+        UserEntity userEntity = userRepository.findByEmail(username)
+                .orElseThrow(() -> new UserNotFoundException("Ошибка! Зайдите в аккаунт еще раз!"));
+
+        return new AppUserDetails(userEntity);
     }
 }

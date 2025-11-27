@@ -22,14 +22,14 @@ public interface EventSpecification {
             }
 
             if(from == null){
-                cb.lessThanOrEqualTo(root.get("start_date"),to);
+                return cb.lessThanOrEqualTo(root.get("dateTime"),to);
             }
 
             if(to == null){
-                cb.greaterThanOrEqualTo(root.get("start_date"),from);
+                return cb.greaterThanOrEqualTo(root.get("dateTime"),from);
             }
 
-            return cb.between(root.get("start_date"),from,to);
+            return cb.between(root.get("dateTime"),from,to);
         });
     }
 

@@ -51,6 +51,10 @@ public class EventService {
     public EventResponse createEvent(UpsertEventRequest request){
         EventEntity entity = eventMapper.toEntity(request);
 
+        if (!entity.getDateTime().isAfter(Instant.now())) {
+            throw new IllegalArgumentException("Системная ошибка! Дата начала мероприятия не может быть меньше, чем время в данный момент");
+        }
+
         entity.setAvailableTickets(request.getTotalTickets());
         entity.setCreatedAt(Instant.now());
         entity.setUpdatedAt(Instant.now());

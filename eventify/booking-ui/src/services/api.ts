@@ -23,7 +23,9 @@ class ApiService {
 
   constructor() {
     this.baseURL = process.env.REACT_APP_API_URL || 'http://localhost:8080';
-    this.useMocks = process.env.REACT_APP_USE_MOCKS === 'true' || !process.env.REACT_APP_API_URL;
+    // Моки включаются ТОЛЬКО если явно указано REACT_APP_USE_MOCKS === 'true'
+    // Если переменная не задана или равна 'false', используем реальный API
+    this.useMocks = process.env.REACT_APP_USE_MOCKS === 'true';
     
     if (this.useMocks) {
       console.log('🔧 Using mock API service for demonstration');

@@ -1,32 +1,26 @@
-# Используем официальный Node.js образ для сборки
 FROM node:18-alpine AS builder
 
-# Устанавливаем рабочую директорию
 WORKDIR /app
 
-# Копируем файлы зависимостей
 COPY package*.json ./
-
-# Устанавливаем зависимости
 RUN npm ci --only=production
 
-# Копируем исходный код
 COPY . .
 
-# Собираем приложение
+# Параметры окружения ДОЛЖНЫ быть заданы до сборки,
+# чтобы create-react-app "зашил" их в бандл.
+ARG API_URL=http://localhost:8080
+ARG USE_MOCKS=false
+ENV REACT_APP_API_URL=$API_URL
+ENV REACT_APP_USE_MOCKS=$USE_MOCKS
+
 RUN npm run build
 
-# Используем nginx для раздачи статических файлов
+# Финальный образ
 FROM nginx:alpine
 
-# Копируем собранные файлы из builder stage
 COPY --from=builder /app/build /usr/share/nginx/html
-
-# Копируем конфигурацию nginx
 COPY nginx.conf /etc/nginx/conf.d/default.conf
 
-# Открываем порт 80
 EXPOSE 80
-
-# Запускаем nginx
-CMD ["nginx", "-g", "daemon off;"] 
+CMD ["nginx", "-g", "daemon off;"]

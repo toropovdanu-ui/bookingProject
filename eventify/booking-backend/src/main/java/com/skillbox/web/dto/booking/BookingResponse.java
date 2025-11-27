@@ -16,6 +16,6 @@ public class BookingResponse {
     private String customerEmail;
     private int ticketCount;
     private String createdAt;
-    private String expireTime;
+    private String expiryTime;
     private boolean confirmed;
 }

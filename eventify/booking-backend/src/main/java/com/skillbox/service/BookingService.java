@@ -18,7 +18,6 @@ import com.skillbox.web.exception.BookingNotFoundException;
 import com.skillbox.web.exception.EventNotFoundException;
 import com.skillbox.web.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
-import org.hibernate.boot.model.process.internal.UserTypeResolution;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -27,7 +26,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.List;
 
 @Service
@@ -92,13 +90,11 @@ public class BookingService {
 
         EventEntity eventEntity = eventRepository.findById(request.getEventId())
                 .orElseThrow(() -> new EventNotFoundException("Ошибка! Мероприятие не найдено!"));
+        int availableTickets = eventEntity.getAvailableTickets() - request.getTicketCount();
+        eventEntity.setAvailableTickets(availableTickets);
 
-        long minTimeForExpireTime = Math.min(
-                eventEntity.getDateTime().getEpochSecond(),
-                Instant.now().plus(3, ChronoUnit.DAYS).getEpochSecond()
-        );
-
-        Instant expireDateTime = Instant.ofEpochMilli(minTimeForExpireTime);
+        Instant threeDaysLater = Instant.now().plus(3, ChronoUnit.DAYS);
+        Instant expireDateTime = eventEntity.getDateTime().isBefore(threeDaysLater) ? eventEntity.getDateTime() : threeDaysLater;
 
         BookingEntity bookingEntity = new BookingEntity(userEntity, eventEntity, request.getTicketCount(),
                 Instant.now(), expireDateTime, false);

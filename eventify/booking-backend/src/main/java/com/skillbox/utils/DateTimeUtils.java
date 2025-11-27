@@ -9,6 +9,10 @@ public class DateTimeUtils {
     }
 
     public static Instant parseDate(String date){
+        if(date == null || date.trim().isEmpty()){
+            return null;
+        }
+
         try{
             return Instant.parse(date);
         }catch (Exception e){

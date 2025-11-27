@@ -20,7 +20,7 @@ services:
     ports:
       - "3000:80"
     environment:
-      - REACT_APP_API_URL=http://host.docker.internal:8080
+      - REACT_APP_API_URL=http://app:8080
       - REACT_APP_USE_MOCKS=false
     profiles:
       - docker-backend

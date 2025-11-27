@@ -1,0 +1,52 @@
+version: '3.8'
+
+services:
+  # БД
+  postgres:
+    image: postgres:15
+    container_name: event-booking-db
+    environment:
+      POSTGRES_DB: eventdb
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    ports:
+      - "5432:5432"
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d eventdb"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+  # Бэкенд
+  app:
+    build:
+      context: ./booking-backend
+      dockerfile: Dockerfile
+    container_name: event-booking-app
+    depends_on:
+      postgres:
+        condition: service_healthy
+    ports:
+      - "8080:8080"
+    environment:
+      SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/eventdb
+      SPRING_DATASOURCE_USERNAME: postgres
+      SPRING_DATASOURCE_PASSWORD: postgres
+
+  # Фронтенд (с бэком)
+  frontend:
+    build:
+      context: ./booking-ui
+      dockerfile: Dockerfile
+      args:
+        API_URL: http://localhost:8080
+        USE_MOCKS: "false"
+    container_name: event-booking-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - app
+
+networks:
+  default:
+    name: event-booking-network

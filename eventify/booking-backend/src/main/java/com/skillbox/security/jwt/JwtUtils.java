@@ -19,16 +19,12 @@ public class JwtUtils {
     @Value("${app.jwt.secret}")
     private String jwtSecret;
 
-    public String generateJwtToken(AppUserDetails userDetails){
-        return generateTokenFromUsername(userDetails.getUsername());
-    }
-
     private SecretKey getSigningKey() {
         byte[] keyBytes = jwtSecret.getBytes(StandardCharsets.UTF_8);
         return Keys.hmacShaKeyFor(keyBytes);
     }
 
-    private String generateTokenFromUsername(String username) {
+    public String generateTokenFromUsername(String username) {
         return Jwts.builder()
                 .subject(username)
                 .issuedAt(new Date())

@@ -16,7 +16,7 @@ public interface BookingSpecification {
                 return null;
             }
 
-            return criteriaBuilder.equal(root.get("event_id"),eventId);
+            return criteriaBuilder.equal(root.get("user").get("id"),eventId);
         });
     }
 
