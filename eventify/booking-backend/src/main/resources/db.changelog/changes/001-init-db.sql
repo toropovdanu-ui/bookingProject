@@ -32,6 +32,8 @@ CREATE TABLE booking(
     ticket_count INTEGER NOT NULL,
     created_at TIMESTAMPTZ NOT NULL,
     expiry_time TIMESTAMPTZ NOT NULL,
+    reminder_at TIMESTAMPTZ,
+    reminder_sent boolean NOT NULL,
     confirmed BOOLEAN NOT NULL,
 
     CONSTRAINT fk_booking_user

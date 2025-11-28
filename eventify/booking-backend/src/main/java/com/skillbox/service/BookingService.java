@@ -24,6 +24,7 @@ import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
 import java.time.Instant;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -55,15 +56,7 @@ public class BookingService {
         );
 
         List<BookingResponse> dtos = entities.getContent().stream()
-                .map(entity -> {
-                    BookingResponse bookingDto = bookingMapper.toDto(entity);
-                    EventResponse eventDto = eventMapper.toDto(entity.getEvent());
-
-                    bookingDto.setEvent(eventDto);
-                    bookingDto.setCustomerEmail(entity.getUser().getEmail());
-
-                    return bookingDto;
-                })
+                .map(this::getBookingDto)
                 .toList();
 
         return new PageImpl<>(dtos, pageable, entities.getTotalElements());
@@ -74,40 +67,22 @@ public class BookingService {
         BookingEntity bookingEntity = bookingRepository.findById(id)
                 .orElseThrow(() -> new BookingNotFoundException("Ошибка! Бронирование не найдено"));
 
-        BookingResponse bookingDto = bookingMapper.toDto(bookingEntity);
-        EventResponse eventDto = eventMapper.toDto(bookingEntity.getEvent());
-
-        bookingDto.setEvent(eventDto);
-        bookingDto.setCustomerEmail(bookingEntity.getUser().getEmail());
-
-        return bookingDto;
+        return getBookingDto(bookingEntity);
     }
 
     @Transactional
-    public BookingResponse createBooking(Long userId,CreateBookingRequest request){
+    public BookingResponse createBooking(Long userId,CreateBookingRequest bookingRequest){
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Ошибка! Зайдите в аккаунт еще раз!"));
 
-        EventEntity eventEntity = eventRepository.findById(request.getEventId())
+        EventEntity eventEntity = eventRepository.findById(bookingRequest.getEventId())
                 .orElseThrow(() -> new EventNotFoundException("Ошибка! Мероприятие не найдено!"));
-        int availableTickets = eventEntity.getAvailableTickets() - request.getTicketCount();
+        int availableTickets = eventEntity.getAvailableTickets() - bookingRequest.getTicketCount();
         eventEntity.setAvailableTickets(availableTickets);
 
-        Instant threeDaysLater = Instant.now().plus(3, ChronoUnit.DAYS);
-        Instant expireDateTime = eventEntity.getDateTime().isBefore(threeDaysLater) ? eventEntity.getDateTime() : threeDaysLater;
+        BookingEntity bookingEntity = getBookingEntity(eventEntity, userEntity, bookingRequest);
 
-        BookingEntity bookingEntity = new BookingEntity(userEntity, eventEntity, request.getTicketCount(),
-                Instant.now(), expireDateTime, false);
-
-        BookingEntity savedBooking = bookingRepository.save(bookingEntity);
-
-        BookingResponse bookingDto = bookingMapper.toDto(savedBooking);
-        EventResponse eventDto = eventMapper.toDto(savedBooking.getEvent());
-
-        bookingDto.setEvent(eventDto);
-        bookingDto.setCustomerEmail(bookingEntity.getUser().getEmail());
-
-        return bookingDto;
+        return getBookingDto(bookingRepository.save(bookingEntity));
     }
 
     @Transactional
@@ -117,7 +92,7 @@ public class BookingService {
 
         bookingEntity.setTicketCount(request.getTicketCount());
 
-        return bookingMapper.toDto(bookingEntity);
+        return getBookingDto(bookingEntity);
     }
 
     @Transactional
@@ -131,15 +106,36 @@ public class BookingService {
                 .orElseThrow(() -> new UserNotFoundException("Ошибка! Зайдите в аккаунт еще раз!"));
 
         return bookingEntities.stream()
-                .map(entity -> {
-                    BookingResponse bookingDto = bookingMapper.toDto(entity);
-                    EventResponse eventDto = eventMapper.toDto(entity.getEvent());
-
-                    bookingDto.setEvent(eventDto);
-                    bookingDto.setCustomerEmail(entity.getUser().getEmail());
-
-                    return bookingDto;
-                })
+                .map(this::getBookingDto)
                 .toList();
+    }
+
+    private BookingEntity getBookingEntity(EventEntity eventEntity, UserEntity userEntity,
+                                           CreateBookingRequest bookingRequest) {
+        Instant threeDaysLater = Instant.now().plus(3, ChronoUnit.DAYS);
+        Instant expireDateTime = eventEntity.getDateTime().isBefore(threeDaysLater) ? eventEntity.getDateTime() : threeDaysLater;
+
+        Integer notifyBeforeHours = userEntity.getNotificationSettings().getNotifyBeforeHours();
+        Instant remainderAt = notifyBeforeHours == null ? null :
+                eventEntity.getDateTime().minus(notifyBeforeHours * 60, ChronoUnit.MINUTES);
+
+        boolean remainderSent = true;
+        if (notifyBeforeHours != null && notifyBeforeHours > 0) {
+            Duration timeUntilEvent = Duration.between(Instant.now(), eventEntity.getDateTime());
+            remainderSent = !timeUntilEvent.minus(Duration.ofHours(notifyBeforeHours)).isNegative();
+        }
+
+        return new BookingEntity(userEntity, eventEntity, bookingRequest.getTicketCount(),
+                Instant.now(), expireDateTime,remainderAt,remainderSent, false);
+    }
+
+    private BookingResponse getBookingDto(BookingEntity bookingEntity) {
+        BookingResponse bookingDto = bookingMapper.toDto(bookingEntity);
+        EventResponse eventDto = eventMapper.toDto(bookingEntity.getEvent());
+
+        bookingDto.setEvent(eventDto);
+        bookingDto.setCustomerEmail(bookingEntity.getUser().getEmail());
+
+        return bookingDto;
     }
 }

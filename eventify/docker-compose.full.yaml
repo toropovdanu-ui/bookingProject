@@ -17,6 +17,13 @@ services:
       timeout: 5s
       retries: 5
 
+  mailhog:
+    image: mailhog/mailhog
+    container_name: event-booking-mailhog
+    ports:
+      - "8025:8025"
+      - "1025:1025"
+
   # Бэкенд
   app:
     build:
@@ -26,12 +33,18 @@ services:
     depends_on:
       postgres:
         condition: service_healthy
+      mailhog:
+        condition: service_started
     ports:
       - "8080:8080"
     environment:
       SPRING_DATASOURCE_URL: jdbc:postgresql://postgres:5432/eventdb
       SPRING_DATASOURCE_USERNAME: postgres
       SPRING_DATASOURCE_PASSWORD: postgres
+      SPRING_MAIL_HOST: mailhog
+      SPRING_MAIL_PORT: 1025
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_AUTH: "false"
+      SPRING_MAIL_PROPERTIES_MAIL_SMTP_STARTTLS_ENABLE: "false"
 
   # Фронтенд (с бэком)
   frontend:

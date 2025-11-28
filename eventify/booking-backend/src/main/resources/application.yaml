@@ -6,6 +6,16 @@ spring:
     username: postgres
     password: postgres
 
+  mail:
+    host: mailhog
+    port: 1025
+    properties:
+      mail:
+        smtp:
+          auth: false
+          starttls:
+            enable: false
+
 app:
   jwt:
     secret: K7mBJ4aZc8Vx0Q3rT9nY2pL1sD6fGhN8kW5eR2tX7vC9bN4mQ1wE3rT6yU8iO0pA2sD5fG7hJ9kL2mN4oP6qR8
