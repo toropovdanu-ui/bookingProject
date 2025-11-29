@@ -3,6 +3,7 @@ package com.skillbox.service;
 import com.skillbox.entity.BookingEntity;
 import com.skillbox.entity.EventEntity;
 import com.skillbox.entity.UserEntity;
+import com.skillbox.event.BookingConfirmedEvent;
 import com.skillbox.mapper.BookingMapper;
 import com.skillbox.mapper.EventMapper;
 import com.skillbox.repository.BookingRepository;
@@ -18,6 +19,7 @@ import com.skillbox.web.exception.BookingNotFoundException;
 import com.skillbox.web.exception.EventNotFoundException;
 import com.skillbox.web.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -39,12 +41,19 @@ public class BookingService {
     private final BookingMapper bookingMapper;
     private final EventMapper eventMapper;
 
+    private final ApplicationEventPublisher publisher;
+
     @Transactional
     public void confirmBooking(Long id){
         BookingEntity bookingEntity = bookingRepository.findById(id)
                 .orElseThrow(() -> new BookingNotFoundException("Ошибка! Бронирование не найдено"));
 
         bookingEntity.setConfirmed(true);
+
+        publisher.publishEvent(new BookingConfirmedEvent(
+                bookingEntity.getUser().getEmail(),
+                bookingEntity.getEvent().getTitle()
+        ));
     }
 
     @Transactional(readOnly = true)
@@ -116,13 +125,13 @@ public class BookingService {
         Instant expireDateTime = eventEntity.getDateTime().isBefore(threeDaysLater) ? eventEntity.getDateTime() : threeDaysLater;
 
         Integer notifyBeforeHours = userEntity.getNotificationSettings().getNotifyBeforeHours();
-        Instant remainderAt = notifyBeforeHours == null ? null :
-                eventEntity.getDateTime().minus(notifyBeforeHours * 60, ChronoUnit.MINUTES);
+        Instant remainderAt = notifyBeforeHours == null && !userEntity.getNotificationSettings().getNotifyUpcoming()
+                ? null : eventEntity.getDateTime().minus(notifyBeforeHours * 60, ChronoUnit.MINUTES);
 
         boolean remainderSent = true;
         if (notifyBeforeHours != null && notifyBeforeHours > 0) {
             Duration timeUntilEvent = Duration.between(Instant.now(), eventEntity.getDateTime());
-            remainderSent = !timeUntilEvent.minus(Duration.ofHours(notifyBeforeHours)).isNegative();
+            remainderSent = timeUntilEvent.minus(Duration.ofHours(notifyBeforeHours)).isNegative();
         }
 
         return new BookingEntity(userEntity, eventEntity, bookingRequest.getTicketCount(),

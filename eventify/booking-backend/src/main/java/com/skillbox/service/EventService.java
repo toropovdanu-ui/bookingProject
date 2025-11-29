@@ -1,6 +1,7 @@
 package com.skillbox.service;
 
 import com.skillbox.entity.EventEntity;
+import com.skillbox.event.EventCreatedEvent;
 import com.skillbox.mapper.EventMapper;
 import com.skillbox.repository.EventRepository;
 import com.skillbox.specification.EventSpecification;
@@ -9,6 +10,7 @@ import com.skillbox.web.dto.event.EventResponse;
 import com.skillbox.web.dto.event.UpsertEventRequest;
 import com.skillbox.web.exception.EventNotFoundException;
 import lombok.RequiredArgsConstructor;
+import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.Pageable;
@@ -22,6 +24,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class EventService {
     private final EventMapper eventMapper;
+    private final ApplicationEventPublisher publisher;
     private final EventRepository eventRepository;
 
     @Transactional(readOnly = true)
@@ -59,7 +62,11 @@ public class EventService {
         entity.setCreatedAt(Instant.now());
         entity.setUpdatedAt(Instant.now());
 
-        return eventMapper.toDto(eventRepository.save(entity));
+        EventEntity savedEvent = eventRepository.save(entity);
+
+        publisher.publishEvent(new EventCreatedEvent(savedEvent.getTitle()));
+
+        return eventMapper.toDto(savedEvent);
     }
 
     @Transactional

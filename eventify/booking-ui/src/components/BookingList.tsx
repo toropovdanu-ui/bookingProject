@@ -1,17 +1,36 @@
-import React, { useState, useEffect, useCallback } from 'react';
-import { Booking } from '../types';
+import React, { useState, useEffect, useCallback, useRef } from 'react';
+import { Booking, BookingUpdateRequest } from '../types';
 import { apiService } from '../services/api';
-import { Calendar, Users, Clock, Trash2, Check, X } from 'lucide-react';
+import { Calendar, Users, Clock, Trash2, Check, X, Edit } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const BookingList: React.FC = () => {
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
+  const [editingBookingId, setEditingBookingId] = useState<number | null>(null);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [newTicketCount, setNewTicketCount] = useState(1);
+  const previousBookingsRef = useRef<Booking[]>([]);
 
   const loadBookings = useCallback(async () => {
     try {
       setLoading(true);
       const bookingsData = await apiService.getBookings();
+      
+      // Проверяем изменения статуса подтверждения для показа уведомлений
+      if (previousBookingsRef.current.length > 0) {
+        bookingsData.forEach((newBooking) => {
+          const oldBooking = previousBookingsRef.current.find(b => b.id === newBooking.id);
+          if (oldBooking && !oldBooking.confirmed && newBooking.confirmed) {
+            toast.success(
+              `🎉 Ваше бронирование на "${newBooking.event.title}" подтверждено!`,
+              { duration: 5000 }
+            );
+          }
+        });
+      }
+      
+      previousBookingsRef.current = bookingsData;
       setBookings(bookingsData);
     } catch (error) {
       console.error('Error loading bookings:', error);
@@ -23,6 +42,12 @@ const BookingList: React.FC = () => {
 
   useEffect(() => {
     loadBookings();
+    // Периодически проверяем изменения статуса (каждые 10 секунд)
+    const interval = setInterval(() => {
+      loadBookings();
+    }, 10000);
+    
+    return () => clearInterval(interval);
   }, [loadBookings]);
 
   const handleDeleteBooking = async (bookingId: number, eventTitle: string, ticketCount: number) => {
@@ -37,6 +62,50 @@ const BookingList: React.FC = () => {
     } catch (error) {
       console.error('Error deleting booking:', error);
       toast.error('Ошибка при отмене бронирования');
+    }
+  };
+
+  const handleEditBooking = (booking: Booking) => {
+    setEditingBookingId(booking.id);
+    setNewTicketCount(booking.ticketCount);
+    setShowEditModal(true);
+  };
+
+  const handleConfirmEdit = async () => {
+    if (!editingBookingId) return;
+
+    const booking = bookings.find(b => b.id === editingBookingId);
+    if (!booking) return;
+
+    if (newTicketCount === booking.ticketCount) {
+      setShowEditModal(false);
+      setEditingBookingId(null);
+      return;
+    }
+
+    if (newTicketCount > booking.event.availableTickets + booking.ticketCount) {
+      toast.error(`Максимально доступно билетов: ${booking.event.availableTickets + booking.ticketCount}`);
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const updateRequest: BookingUpdateRequest = {
+        ticketCount: newTicketCount,
+      };
+      
+      await apiService.updateBooking(editingBookingId, updateRequest);
+      
+      toast.success('Количество билетов успешно обновлено!');
+      setShowEditModal(false);
+      setEditingBookingId(null);
+      loadBookings();
+    } catch (error: any) {
+      console.error('Error updating booking:', error);
+      const message = error.response?.data?.message || 'Ошибка при обновлении бронирования';
+      toast.error(message);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -129,13 +198,22 @@ const BookingList: React.FC = () => {
                     </div>
                     <div className="flex items-center space-x-2">
                       {!booking.confirmed && (
-                        <button
-                          onClick={() => handleDeleteBooking(booking.id, booking.event.title, booking.ticketCount)}
-                          className="inline-flex items-center p-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
-                          title="Отменить бронирование"
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </button>
+                        <>
+                          <button
+                            onClick={() => handleEditBooking(booking)}
+                            className="inline-flex items-center p-2 border border-transparent text-sm leading-4 font-medium rounded-md text-indigo-700 bg-indigo-100 hover:bg-indigo-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-indigo-500"
+                            title="Изменить количество билетов"
+                          >
+                            <Edit className="w-4 h-4" />
+                          </button>
+                          <button
+                            onClick={() => handleDeleteBooking(booking.id, booking.event.title, booking.ticketCount)}
+                            className="inline-flex items-center p-2 border border-transparent text-sm leading-4 font-medium rounded-md text-red-700 bg-red-100 hover:bg-red-200 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-red-500"
+                            title="Отменить бронирование"
+                          >
+                            <Trash2 className="w-4 h-4" />
+                          </button>
+                        </>
                       )}
                     </div>
                   </div>
@@ -143,6 +221,76 @@ const BookingList: React.FC = () => {
               </li>
             ))}
           </ul>
+        </div>
+      )}
+
+      {/* Модальное окно для изменения количества билетов */}
+      {showEditModal && editingBookingId && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div className="mt-3">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Изменить количество билетов
+              </h3>
+              
+              {(() => {
+                const booking = bookings.find(b => b.id === editingBookingId);
+                if (!booking) return null;
+                
+                const maxTickets = booking.event.availableTickets + booking.ticketCount;
+                
+                return (
+                  <>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Текущее количество: <strong>{booking.ticketCount}</strong> билетов
+                    </p>
+                    <p className="text-sm text-gray-600 mb-4">
+                      Доступно для изменения: до <strong>{maxTickets}</strong> билетов
+                    </p>
+                    
+                    <div className="mb-4">
+                      <label htmlFor="ticketCount" className="block text-sm font-medium text-gray-700 mb-2">
+                        Новое количество билетов:
+                      </label>
+                      <input
+                        type="number"
+                        id="ticketCount"
+                        min="1"
+                        max={maxTickets}
+                        value={newTicketCount}
+                        onChange={(e) => {
+                          const value = parseInt(e.target.value);
+                          if (value >= 1 && value <= maxTickets) {
+                            setNewTicketCount(value);
+                          }
+                        }}
+                        className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm"
+                      />
+                    </div>
+                    
+                    <div className="flex justify-end space-x-3">
+                      <button
+                        onClick={() => {
+                          setShowEditModal(false);
+                          setEditingBookingId(null);
+                        }}
+                        className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                      >
+                        Отмена
+                      </button>
+                      <button
+                        onClick={handleConfirmEdit}
+                        disabled={loading || newTicketCount === booking.ticketCount}
+                        className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:opacity-50"
+                      >
+                        {loading ? 'Обновление...' : 'Сохранить'}
+                      </button>
+                    </div>
+                  </>
+                );
+              })()}
+            </div>
+          </div>
         </div>
       )}
     </div>

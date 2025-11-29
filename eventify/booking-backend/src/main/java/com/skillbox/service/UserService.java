@@ -11,6 +11,10 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.Duration;
+import java.time.Instant;
+import java.util.stream.Collectors;
+
 @Service
 @RequiredArgsConstructor
 public class UserService {
@@ -35,8 +39,9 @@ public class UserService {
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Ошибка! Зайдите в аккаунт еще раз!"));
 
-        NotificationSettings notificationSettings = notificationMapper.toEntity(request);
+        checkOnNotifyUpcoming(request,userEntity);
 
+        NotificationSettings notificationSettings = notificationMapper.toEntity(request);
         userEntity.setNotificationSettings(notificationSettings);
 
         return notificationMapper.toDto(notificationSettings);
@@ -48,5 +53,24 @@ public class UserService {
                 .orElseThrow(() -> new UserNotFoundException("Ошибка! Зайдите в аккаунт еще раз!"));
 
         userEntity.setNotificationSettings(new NotificationSettings());
+
+        userEntity.getBookings().forEach(booking->{
+            Instant startEvent = booking.getEvent().getDateTime();
+            Instant reminderAt = startEvent.minus(
+                    Duration.ofHours(
+                            userEntity.getNotificationSettings().getNotifyBeforeHours()
+                    )
+            );
+
+            booking.setReminderAt(reminderAt);
+        });
+    }
+
+    private void checkOnNotifyUpcoming(UpdateNotificationSettingsRequest request,UserEntity userEntity) {
+        if(!request.getNotifyUpcoming()){
+            userEntity.getBookings().forEach(entity->{
+                entity.setReminderSent(true);
+            });
+        }
     }
 }

@@ -7,6 +7,7 @@ import com.skillbox.security.AppUserDetails;
 import com.skillbox.security.jwt.JwtUtils;
 import com.skillbox.web.dto.user.AuthUserResponse;
 import com.skillbox.web.dto.user.UserCredentialRequest;
+import com.skillbox.web.exception.UserExistsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -17,8 +18,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.Optional;
 
 @Service
 @RequiredArgsConstructor
@@ -30,6 +30,8 @@ public class AuthService {
 
     @Transactional
     public AuthUserResponse register(UserCredentialRequest request){
+        checkUniqueEmail(request.getEmail());
+
         UserEntity userEntity = new UserEntity();
         userEntity.initialize(request,encoder);
 
@@ -83,5 +85,13 @@ public class AuthService {
                 .token(jwtToken)
                 .role(role)
                 .build();
+    }
+
+    private void checkUniqueEmail(String email) {
+        Optional<UserEntity> user = userRepository.findByEmail(email);
+
+        if(user.isPresent()){
+            throw new UserExistsException("Ошибка! Пользователь с таким email уже есть в системе");
+        }
     }
 }

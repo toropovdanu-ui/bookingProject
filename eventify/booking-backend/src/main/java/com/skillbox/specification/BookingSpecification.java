@@ -16,7 +16,7 @@ public interface BookingSpecification {
                 return null;
             }
 
-            return criteriaBuilder.equal(root.get("user").get("id"),eventId);
+            return criteriaBuilder.equal(root.get("event").get("id"),eventId);
         });
     }
 
@@ -26,7 +26,7 @@ public interface BookingSpecification {
                 return null;
             }
 
-            return criteriaBuilder.equal(root.get("confirmed"), unconfirmedOnly);
+            return criteriaBuilder.equal(root.get("confirmed"), false);
         });
     }
 }
