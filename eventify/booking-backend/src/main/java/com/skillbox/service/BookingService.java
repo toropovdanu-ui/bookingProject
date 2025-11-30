@@ -139,8 +139,7 @@ public class BookingService {
 
     @Transactional(readOnly = true)
     public List<BookingResponse> getUserBookings(Long userId){
-        List<BookingEntity> bookingEntities = bookingRepository.findAllByUserId(userId)
-                .orElseThrow(() -> new UserNotFoundException("Ошибка! Зайдите в аккаунт еще раз!"));
+        List<BookingEntity> bookingEntities = bookingRepository.findAllByUserId(userId);
 
         return bookingEntities.stream()
                 .map(this::getBookingDto)

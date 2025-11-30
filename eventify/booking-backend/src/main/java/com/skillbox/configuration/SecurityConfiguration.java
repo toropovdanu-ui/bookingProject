@@ -75,6 +75,8 @@ public class SecurityConfiguration {
                         .requestMatchers("/error/**").permitAll()
                         .requestMatchers("/events/**").permitAll()
                         .requestMatchers("/auth/**").permitAll()
+                        .requestMatchers("/swagger-ui/**", "/swagger-ui.html").permitAll()
+                        .requestMatchers("/v3/api-docs/**", "/swagger-resources/**", "/webjars/**").permitAll()
                         .anyRequest().authenticated())
                 .exceptionHandling(configurer->
                         configurer.authenticationEntryPoint(authenticationEntryPoint))
