@@ -9,6 +9,7 @@ import com.skillbox.web.dto.event.EventFilterRequest;
 import com.skillbox.web.dto.event.EventResponse;
 import com.skillbox.web.dto.event.UpsertEventRequest;
 import com.skillbox.web.exception.EventNotFoundException;
+import com.skillbox.web.exception.EventStartInPastException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -55,7 +56,7 @@ public class EventService {
         EventEntity entity = eventMapper.toEntity(request);
 
         if (!entity.getDateTime().isAfter(Instant.now())) {
-            throw new IllegalArgumentException("Системная ошибка! Дата начала мероприятия не может быть меньше, чем время в данный момент");
+            throw new EventStartInPastException("Дата начала мероприятия не может быть меньше, чем время в данный момент");
         }
 
         entity.setAvailableTickets(request.getTotalTickets());

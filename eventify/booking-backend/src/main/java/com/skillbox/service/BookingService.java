@@ -17,6 +17,7 @@ import com.skillbox.web.dto.booking.UpdateBookingRequest;
 import com.skillbox.web.dto.event.EventResponse;
 import com.skillbox.web.exception.BookingNotFoundException;
 import com.skillbox.web.exception.EventNotFoundException;
+import com.skillbox.web.exception.InsufficientActivitiesException;
 import com.skillbox.web.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
@@ -86,26 +87,53 @@ public class BookingService {
 
         EventEntity eventEntity = eventRepository.findById(bookingRequest.getEventId())
                 .orElseThrow(() -> new EventNotFoundException("Ошибка! Мероприятие не найдено!"));
+
         int availableTickets = eventEntity.getAvailableTickets() - bookingRequest.getTicketCount();
-        eventEntity.setAvailableTickets(availableTickets);
 
-        BookingEntity bookingEntity = getBookingEntity(eventEntity, userEntity, bookingRequest);
+        if(availableTickets < 0){
+            throw new InsufficientActivitiesException("Билеты не мероприятия больше не доступны");
+        }
 
+        eventRepository.reduceAvailableTickets(eventEntity.getId(),bookingRequest.getTicketCount());
+
+        EventEntity event = eventRepository.findById(eventEntity.getId())
+                .orElseThrow();
+
+        BookingEntity bookingEntity = getBookingEntity(event, userEntity, bookingRequest);
         return getBookingDto(bookingRepository.save(bookingEntity));
     }
 
     @Transactional
-    public BookingResponse updateById(Long id,UpdateBookingRequest request){
-        BookingEntity bookingEntity = bookingRepository.findById(id)
-                .orElseThrow(() -> new BookingNotFoundException("Ошибка! Бронирование не найдено"));
+    public BookingResponse updateById(Long id, UpdateBookingRequest request) {
+        BookingEntity booking = bookingRepository.findById(id)
+                .orElseThrow(() -> new BookingNotFoundException("Бронирование не найдено"));
 
-        bookingEntity.setTicketCount(request.getTicketCount());
+        int oldCount = booking.getTicketCount();
+        int newCount = request.getTicketCount();
+        int delta = newCount - oldCount;
 
-        return getBookingDto(bookingEntity);
+        EventEntity event = booking.getEvent();
+        if (event.getAvailableTickets() < delta) {
+            throw new InsufficientActivitiesException("Недостаточно доступных билетов");
+        }
+
+        eventRepository.updateAvailableTickets(event.getId(), -delta);
+        booking.setTicketCount(newCount);
+        bookingRepository.save(booking);
+
+        return getBookingDto(booking);
     }
 
     @Transactional
     public void deleteBooking(Long id){
+        BookingEntity bookingEntity = bookingRepository.findById(id)
+                .orElseThrow(() -> new BookingNotFoundException("Ошибка! Бронирование не найдено"));
+
+        eventRepository.updateAvailableTickets(
+                bookingEntity.getEvent().getId(),
+                bookingEntity.getTicketCount()
+        );
+
         bookingRepository.deleteById(id);
     }
 

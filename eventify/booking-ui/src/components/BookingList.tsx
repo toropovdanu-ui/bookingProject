@@ -83,8 +83,8 @@ const BookingList: React.FC = () => {
       return;
     }
 
-    if (newTicketCount > booking.event.availableTickets + booking.ticketCount) {
-      toast.error(`Максимально доступно билетов: ${booking.event.availableTickets + booking.ticketCount}`);
+    if (newTicketCount > 10) {
+      toast.error('Максимально можно забронировать 10 билетов');
       return;
     }
 
@@ -237,7 +237,7 @@ const BookingList: React.FC = () => {
                 const booking = bookings.find(b => b.id === editingBookingId);
                 if (!booking) return null;
                 
-                const maxTickets = booking.event.availableTickets + booking.ticketCount;
+                const maxTickets = 10;
                 
                 return (
                   <>
@@ -245,7 +245,7 @@ const BookingList: React.FC = () => {
                       Текущее количество: <strong>{booking.ticketCount}</strong> билетов
                     </p>
                     <p className="text-sm text-gray-600 mb-4">
-                      Доступно для изменения: до <strong>{maxTickets}</strong> билетов
+                      Максимально можно забронировать: <strong>{maxTickets}</strong> билетов
                     </p>
                     
                     <div className="mb-4">
