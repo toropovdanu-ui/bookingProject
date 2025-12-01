@@ -2,6 +2,7 @@ package com.skillbox.web.exception;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
@@ -48,7 +49,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(EventStartInPastException.class)
     public ResponseEntity<ApiError> eventStartInPastException(EventStartInPastException e){
-        return ResponseEntity.status(HttpStatus.NOT_FOUND)
+        return ResponseEntity.status(HttpStatus.UNPROCESSABLE_ENTITY)
                 .body(new ApiError(
                         "EVENT_IN_PAST_TIME",
                         e.getMessage()
@@ -72,6 +73,18 @@ public class GlobalExceptionHandler {
                 .body(
                         new ApiError(
                                 "DATE_TIME_FORMAT",
+                                e.getMessage()
+                        )
+                );
+
+    }
+
+    @ExceptionHandler(MethodArgumentNotValidException.class)
+    public ResponseEntity<ApiError> methodArgumentNotValidException(MethodArgumentNotValidException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(
+                        new ApiError(
+                                "VALIDATION_ERROR",
                                 e.getMessage()
                         )
                 );

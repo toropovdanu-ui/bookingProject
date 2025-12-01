@@ -110,14 +110,14 @@ public class BookingService {
 
         int oldCount = booking.getTicketCount();
         int newCount = request.getTicketCount();
-        int delta = newCount - oldCount;
+        int delta = oldCount - newCount;
 
         EventEntity event = booking.getEvent();
         if (event.getAvailableTickets() < delta) {
             throw new InsufficientActivitiesException("Недостаточно доступных билетов");
         }
 
-        eventRepository.updateAvailableTickets(event.getId(), -delta);
+        eventRepository.updateAvailableTickets(event.getId(), delta);
         booking.setTicketCount(newCount);
         bookingRepository.save(booking);
 

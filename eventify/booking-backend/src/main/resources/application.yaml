@@ -1,6 +1,7 @@
 spring:
   liquibase:
     change-log: /db.changelog/db.changelog-master.xml
+    clear-checksums: true
   datasource:
     url: jdbc:postgresql://localhost:5432/eventdb
     username: postgres
