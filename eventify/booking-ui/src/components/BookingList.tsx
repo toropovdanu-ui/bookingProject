@@ -3,8 +3,10 @@ import { Booking, BookingUpdateRequest } from '../types';
 import { apiService } from '../services/api';
 import { Calendar, Users, Clock, Trash2, Check, X, Edit } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { useNavigate } from 'react-router-dom';
 
 const BookingList: React.FC = () => {
+  const navigate = useNavigate();
   const [bookings, setBookings] = useState<Booking[]>([]);
   const [loading, setLoading] = useState(true);
   const [editingBookingId, setEditingBookingId] = useState<number | null>(null);
@@ -160,7 +162,10 @@ const BookingList: React.FC = () => {
           <ul className="divide-y divide-gray-200">
             {bookings.map((booking) => (
               <li key={booking.id}>
-                <div className="px-4 py-4 sm:px-6">
+                <div
+                  className="px-4 py-4 sm:px-6 cursor-pointer hover:bg-gray-50 transition-colors"
+                  onClick={() => navigate(`/bookings/${booking.id}`)}
+                >
                   <div className="flex items-center justify-between">
                     <div className="flex items-center">
                       <div className="flex-shrink-0">

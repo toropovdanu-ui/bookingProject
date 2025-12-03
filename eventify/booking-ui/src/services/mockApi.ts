@@ -398,6 +398,17 @@ class MockApiService {
   }
 
   // Bookings endpoints - возвращает только бронирования текущего пользователя
+  async getBooking(id: number): Promise<Booking> {
+    await delay(200);
+
+    const booking = mockBookings.find(b => b.id === id);
+    if (!booking) {
+      throw new Error('Booking not found');
+    }
+
+    return booking;
+  }
+
   async getBookings(): Promise<Booking[]> {
     await delay(300);
     // В реальном API здесь был бы фильтр по текущему пользователю

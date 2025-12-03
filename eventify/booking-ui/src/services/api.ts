@@ -137,6 +137,14 @@ class ApiService {
   }
 
   // Bookings endpoints
+  async getBooking(id: number): Promise<Booking> {
+    if (this.useMocks) {
+      return mockApiService.getBooking(id);
+    }
+    const response = await this.api.get(`/bookings/${id}`);
+    return response.data;
+  }
+
   async getBookings(): Promise<Booking[]> {
     if (this.useMocks) {
       return mockApiService.getBookings();

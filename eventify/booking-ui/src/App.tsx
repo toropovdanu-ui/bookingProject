@@ -10,6 +10,7 @@ import EventForm from './components/EventForm';
 import BookingList from './components/BookingList';
 import AdminBookingList from './components/AdminBookingList';
 import NotificationSettings from './components/NotificationSettings';
+import BookingDetail from './components/BookingDetail';
 import './App.css';
 
 // Protected Route component
@@ -70,6 +71,11 @@ const AppContent: React.FC = () => {
           <Route path="/events/:id/edit" element={
             <ProtectedRoute adminOnly>
               <EventForm mode="edit" />
+            </ProtectedRoute>
+          } />
+          <Route path="/bookings/:id" element={
+            <ProtectedRoute>
+              <BookingDetail />
             </ProtectedRoute>
           } />
           <Route path="/bookings" element={
