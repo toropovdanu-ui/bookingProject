@@ -1,0 +1,89 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
+  <component name="ChangeListManager">
+    <list default="true" id="669f41bf-fdb9-4446-8b6d-708b9045165c" name="Changes" comment="">
+      <change beforePath="$PROJECT_DIR$/booking-backend/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/booking-backend/.idea/modules.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/booking-backend/.idea/modules/event-booking.main.iml" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/booking-backend/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/booking-backend/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/booking-backend/src/main/java/com/skillbox/web/contoller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/booking-backend/src/main/java/com/skillbox/web/contoller/AuthController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/booking-backend/src/main/java/com/skillbox/web/contoller/EventController.java" beforeDir="false" afterPath="$PROJECT_DIR$/booking-backend/src/main/java/com/skillbox/web/contoller/EventController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/booking-backend/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/booking-backend/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/booking-ui/src/App.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/booking-ui/src/App.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/booking-ui/src/components/BookingList.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/booking-ui/src/components/BookingList.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/booking-ui/src/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/booking-ui/src/services/api.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/booking-ui/src/services/mockApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/booking-ui/src/services/mockApi.ts" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_BRANCH_BY_REPOSITORY">
+      <map>
+        <entry key="$PROJECT_DIR$/.." value="master" />
+      </map>
+    </option>
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/.." />
+  </component>
+  <component name="GitLabMergeRequestFiltersHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPENED&quot;,
+    &quot;assignee&quot;: {
+      &quot;type&quot;: &quot;org.jetbrains.plugins.gitlab.mergerequest.ui.filters.GitLabMergeRequestsFiltersValue.MergeRequestsMemberFilterValue.MergeRequestsAssigneeFilterValue&quot;,
+      &quot;username&quot;: &quot;danil_toropov&quot;,
+      &quot;fullname&quot;: &quot;данил торопов&quot;
+    }
+  }
+}</component>
+  <component name="GitLabMergeRequestsSettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;first&quot;: &quot;https://gitlab.skillbox.ru/danil_toropov/java_web_development_final_project.git&quot;,
+    &quot;second&quot;: &quot;a60822fd-6f19-469e-ab2e-5b5e4f69129d&quot;
+  }
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 6
+}</component>
+  <component name="ProjectId" id="35VhSSk9JXWr2U0XVBZ8CXJCXkj" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent"><![CDATA[{
+  "keyToString": {
+    "RunOnceActivity.ShowReadmeOnStart": "true",
+    "RunOnceActivity.git.unshallow": "true",
+    "git-widget-placeholder": "develop",
+    "kotlin-language-version-configured": "true",
+    "last_opened_file_path": "D:/java_web_development_final_project"
+  }
+}]]></component>
+  <component name="RunManager">
+    <configuration default="true" type="JetRunConfigurationType">
+      <module name="eventify" />
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <configuration default="true" type="KotlinStandaloneScriptRunConfigurationType">
+      <module name="eventify" />
+      <option name="filePath" />
+      <method v="2" />
+    </configuration>
+  </component>
+  <component name="SpellCheckerSettings" RuntimeDictionaries="0" Folders="0" CustomDictionaries="0" DefaultDictionary="application-level" UseSingleDictionary="true" transferred="true" />
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="669f41bf-fdb9-4446-8b6d-708b9045165c" name="Changes" comment="" />
+      <created>1763201145871</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1763201145871</updated>
+    </task>
+    <servers />
+  </component>
+</project>
