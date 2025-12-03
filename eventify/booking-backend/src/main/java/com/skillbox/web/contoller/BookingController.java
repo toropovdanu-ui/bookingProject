@@ -34,7 +34,6 @@ public class BookingController {
             description = "Данный энд-поинт возвращает бронирование по его id"
     )
     @ApiResponse(responseCode = "200", description = "Бронирование успешно найдено")
-    @ApiResponse(responseCode = "200", description = "Бронирование успешно найдено")
     @ApiResponse(responseCode = "404", description = "Бронирование по заданному id не найдено")
     @GetMapping("/{id}")
     public ResponseEntity<BookingResponse> getById(@PathVariable Long id){
@@ -51,14 +50,20 @@ public class BookingController {
     @ApiResponse(responseCode = "409", description = "Билеты не доступны(раскупили другие)")
     @PutMapping("/{id}")
     public ResponseEntity<BookingResponse> updateById(@PathVariable Long id,
+                                                      @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                                                              description = "Содержит новое количество билетов для бронирования",
+                                                              required = true
+                                                      )
                                                       @Valid @RequestBody UpdateBookingRequest request){
         return ResponseEntity.ok(bookingService.updateById(id,request));
     } 
 
     @Operation(
             summary = "Отмена бронирования по его id",
-            description = "Как и админ, так и пользователь может "
+            description = "Как админ, так и пользователь может отменять бронирование по его id"
     )
+    @ApiResponse(responseCode = "204", description = "Бронирование успешно отменено")
+    @ApiResponse(responseCode = "404", description = "Бронирование не найдено")
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> cancelById(@PathVariable Long id){
         bookingService.deleteBooking(id);
@@ -66,6 +71,12 @@ public class BookingController {
         return ResponseEntity.noContent().build();
     }
 
+    @Operation(
+            summary = "Получение бронирований пользователя",
+            description = "Пользователь делает запрос, по jwt токену система понимает " +
+                    "кто сделал запрос и возвращает все бронирования пользователя"
+    )
+    @ApiResponse(responseCode = "200",description = "Бронирования успешно найдены")
     @GetMapping
     public ResponseEntity<List<BookingResponse>> getUserBookings(){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
@@ -74,8 +85,22 @@ public class BookingController {
         return ResponseEntity.ok(bookingService.getUserBookings(userDetails.getUserId()));
     }
 
+    @Operation(
+            summary = "Создание бронирования",
+            description = "Пользователь находясь в подробной информации об мероприятии," +
+                    " может выбрать количество билетов, которые он готов забронировать " +
+                    "и создаться бронирование"
+    )
+    @ApiResponse(responseCode = "201", description = "Бронирование успешно создано")
+    @ApiResponse(responseCode = "404", description = "Пользователь не найден")
+    @ApiResponse(responseCode = "404", description = "Мероприятие не найдено")
     @PostMapping
-    public ResponseEntity<BookingResponse> createBooking(@Valid @RequestBody CreateBookingRequest request){
+    public ResponseEntity<BookingResponse> createBooking(
+            @io.swagger.v3.oas.annotations.parameters.RequestBody(
+                    description = "Содержит id мероприятия и количество билетов для бронирования",
+                    required = true
+            )
+            @Valid @RequestBody CreateBookingRequest request){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         AppUserDetails userDetails = (AppUserDetails) authentication.getPrincipal();
 

@@ -6,6 +6,7 @@ import com.skillbox.mapper.NotificationMapper;
 import com.skillbox.repository.UserRepository;
 import com.skillbox.web.dto.user.NotificationSettingsResponse;
 import com.skillbox.web.dto.user.UpdateNotificationSettingsRequest;
+import com.skillbox.web.exception.InvalidRequestException;
 import com.skillbox.web.exception.UserNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
@@ -13,7 +14,6 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
-import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -22,7 +22,7 @@ public class UserService {
     private final NotificationMapper notificationMapper;
 
     @Transactional(readOnly = true)
-    public NotificationSettingsResponse userNotifications(Long userId){
+    public NotificationSettingsResponse getUserNotifications(Long userId){
         UserEntity userEntity = userRepository.findById(userId)
                 .orElseThrow(() -> new UserNotFoundException("Ошибка! Зайдите в аккаунт еще раз!"));
 
@@ -33,7 +33,7 @@ public class UserService {
     public NotificationSettingsResponse updateUserNotifications(Long userId,
                                                                 UpdateNotificationSettingsRequest request){
         if(request.getNotifyUpcoming() && request.getNotifyBeforeHours() == null){
-            throw new IllegalArgumentException("При включённом уведомлении о предстоящих событиях необходимо указать количество часов");
+            throw new InvalidRequestException("При включённом уведомлении о предстоящих событиях необходимо указать количество часов");
         }
 
         UserEntity userEntity = userRepository.findById(userId)
