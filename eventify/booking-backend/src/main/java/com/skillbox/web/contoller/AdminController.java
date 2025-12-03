@@ -48,7 +48,7 @@ public class AdminController {
     public ResponseEntity<EventResponse> updateEvent(@PathVariable Long id,
                                                      @io.swagger.v3.oas.annotations.parameters.RequestBody(
                                                              description = "Данные для обновления объекта мероприятия" +
-                                                                     " по ее id",
+                                                                     " по его id",
                                                              required = true
                                                      )
                                                      @Valid @RequestBody UpsertEventRequest request){
@@ -70,7 +70,7 @@ public class AdminController {
 
     @Operation(
             summary = "Подтверждение бронирования администратором",
-            description = "По id бронирования, администратор подтверждает бронирование" +
+            description = "По id бронирования, администратор подтверждает его" +
                     "и отправляется уведомление пользователю на smtp сервер о том, что бронирование" +
                     " подтверждено"
     )
