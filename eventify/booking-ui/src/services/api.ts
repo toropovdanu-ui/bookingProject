@@ -229,12 +229,12 @@ class ApiService {
 
   // Telegram link endpoint
   async linkTelegram(): Promise<string> {
-    if (this.useMocks) {
-      return mockApiService.linkTelegram();
+      if (this.useMocks) {
+        return mockApiService.linkTelegram();
+      }
+      const response = await this.api.post('/user/telegram/link');
+      return response.data.link;
     }
-    const response = await this.api.post('/user/telegram/link');
-    return response.data;
-  }
 }
 
 export const apiService = new ApiService(); 

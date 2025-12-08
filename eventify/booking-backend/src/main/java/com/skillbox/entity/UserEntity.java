@@ -2,10 +2,7 @@ package com.skillbox.entity;
 
 import com.skillbox.web.dto.user.UserCredentialRequest;
 import jakarta.persistence.*;
-import lombok.AllArgsConstructor;
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
+import lombok.*;
 import org.springframework.security.crypto.password.PasswordEncoder;
 
 import java.time.Instant;
@@ -17,6 +14,7 @@ import static com.skillbox.entity.RoleType.ROLE_USER;
 @Getter
 @Setter
 @Entity
+@EqualsAndHashCode
 @AllArgsConstructor
 @NoArgsConstructor
 @Table(name = "app_user")
@@ -37,7 +35,7 @@ public class UserEntity {
     private Set<RoleType> roles = new HashSet<>();
 
     @OneToMany(mappedBy = "user", cascade = CascadeType.ALL, orphanRemoval = true)
-    private Set<BookingEntity> bookings;
+    private Set<BookingEntity> bookings = new HashSet<>();
 
     @Embedded
     private NotificationSettings notificationSettings = new NotificationSettings();
@@ -52,7 +50,6 @@ public class UserEntity {
         email = request.getEmail();
         password = encoder.encode(request.getPassword());
         roles = Set.of(ROLE_USER);
-        bookings = new HashSet<>();
         notificationSettings = new NotificationSettings();
         createdAt = Instant.now();
         updatedAt = Instant.now();

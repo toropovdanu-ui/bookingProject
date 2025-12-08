@@ -7,11 +7,17 @@ import com.skillbox.web.dto.user.UpdateNotificationSettingsRequest;
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import io.swagger.v3.oas.annotations.tags.Tag;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.core.Authentication;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.Collections;
+import java.util.Map;
+import java.util.UUID;
 
 @Tag(
         name = "Контроллер для взаимодействия пользователя с настройками нотификации",
@@ -56,7 +62,7 @@ public class UserController {
                     description = "Класс с обновленными настройками нотификации",
                     required = true
             )
-            @RequestBody UpdateNotificationSettingsRequest request
+            @Valid @RequestBody UpdateNotificationSettingsRequest request
     ){
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         AppUserDetails userDetails = (AppUserDetails) authentication.getPrincipal();
@@ -79,5 +85,17 @@ public class UserController {
         userService.deleteNotifications(userDetails.getUserId());
 
         return ResponseEntity.noContent().build();
+    }
+
+    @Operation(
+            summary = "Отдает пользователю ссылку на телеграмм бота",
+            description = "Пока замокован в целях пет-проекта"
+    )
+    @ApiResponse(responseCode = "200", description = "Ссылка на телеграмм бота")
+    @ApiResponse(responseCode = "401", description = "Авторизуйтесь еще раз")
+    @PostMapping("/telegram/link")
+    public ResponseEntity<Map<String, String>> getTelegramLink() {
+        String link = "TG_" + UUID.randomUUID().toString().toUpperCase();
+        return ResponseEntity.ok(Map.of("link", link));
     }
 }

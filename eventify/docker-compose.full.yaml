@@ -52,7 +52,7 @@ services:
       context: ./booking-ui
       dockerfile: Dockerfile
       args:
-        API_URL: http://localhost:8080
+        API_URL: /api
         USE_MOCKS: "false"
     container_name: event-booking-frontend
     ports:

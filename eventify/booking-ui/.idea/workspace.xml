@@ -1,14 +1,26 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
+  <component name="AutoImportSettings">
+    <option name="autoReloadType" value="SELECTIVE" />
+  </component>
   <component name="ChangeListManager">
     <list default="true" id="ca60fe52-1ef1-482f-b30c-137f35bb4bb4" name="Changes" comment="">
-      <change beforePath="$PROJECT_DIR$/../booking-backend/.idea/modules.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../booking-backend/.idea/modules.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../booking-backend/.idea/modules/event-booking.main.iml" beforeDir="false" />
-      <change beforePath="$PROJECT_DIR$/../booking-backend/src/main/java/com/skillbox/web/contoller/AuthController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../booking-backend/src/main/java/com/skillbox/web/contoller/AuthController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../booking-backend/src/main/java/com/skillbox/web/contoller/EventController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../booking-backend/src/main/java/com/skillbox/web/contoller/EventController.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../booking-backend/src/main/resources/application.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../booking-backend/src/main/resources/application.yaml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../booking-backend/.gradle/8.10/executionHistory/executionHistory.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../booking-backend/.gradle/8.10/executionHistory/executionHistory.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../booking-backend/.gradle/8.10/executionHistory/executionHistory.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../booking-backend/.gradle/8.10/executionHistory/executionHistory.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../booking-backend/.gradle/8.10/fileHashes/fileHashes.bin" beforeDir="false" afterPath="$PROJECT_DIR$/../booking-backend/.gradle/8.10/fileHashes/fileHashes.bin" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../booking-backend/.gradle/8.10/fileHashes/fileHashes.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../booking-backend/.gradle/8.10/fileHashes/fileHashes.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../booking-backend/.gradle/buildOutputCleanup/buildOutputCleanup.lock" beforeDir="false" afterPath="$PROJECT_DIR$/../booking-backend/.gradle/buildOutputCleanup/buildOutputCleanup.lock" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../booking-backend/.gradle/file-system.probe" beforeDir="false" afterPath="$PROJECT_DIR$/../booking-backend/.gradle/file-system.probe" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../booking-backend/readme.md" beforeDir="false" afterPath="$PROJECT_DIR$/../booking-backend/README.md" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../booking-backend/src/main/java/com/skillbox/web/contoller/UserController.java" beforeDir="false" afterPath="$PROJECT_DIR$/../booking-backend/src/main/java/com/skillbox/web/contoller/UserController.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../booking-backend/src/main/java/com/skillbox/web/exception/GlobalExceptionHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/../booking-backend/src/main/java/com/skillbox/web/exception/GlobalExceptionHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/nginx.conf" beforeDir="false" afterPath="$PROJECT_DIR$/nginx.conf" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/BookingDetail.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/BookingDetail.tsx" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/components/NotificationSettings.tsx" beforeDir="false" afterPath="$PROJECT_DIR$/src/components/NotificationSettings.tsx" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/services/api.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/api.ts" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/services/mockApi.ts" beforeDir="false" afterPath="$PROJECT_DIR$/src/services/mockApi.ts" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../docker-compose.full.yaml" beforeDir="false" afterPath="$PROJECT_DIR$/../docker-compose.full.yaml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -18,38 +30,38 @@
   <component name="Git.Settings">
     <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$/../.." />
   </component>
-  <component name="GitLabMergeRequestFiltersHistory"><![CDATA[{
-  "lastFilter": {
-    "state": "OPENED",
-    "assignee": {
-      "type": "org.jetbrains.plugins.gitlab.mergerequest.ui.filters.GitLabMergeRequestsFiltersValue.MergeRequestsMemberFilterValue.MergeRequestsAssigneeFilterValue",
-      "username": "danil_toropov",
-      "fullname": "данил торопов"
+  <component name="GitLabMergeRequestFiltersHistory">{
+  &quot;lastFilter&quot;: {
+    &quot;state&quot;: &quot;OPENED&quot;,
+    &quot;assignee&quot;: {
+      &quot;type&quot;: &quot;org.jetbrains.plugins.gitlab.mergerequest.ui.filters.GitLabMergeRequestsFiltersValue.MergeRequestsMemberFilterValue.MergeRequestsAssigneeFilterValue&quot;,
+      &quot;username&quot;: &quot;danil_toropov&quot;,
+      &quot;fullname&quot;: &quot;данил торопов&quot;
     }
   }
-}]]></component>
-  <component name="GitLabMergeRequestsSettings"><![CDATA[{
-  "selectedUrlAndAccountId": {
-    "first": "https://gitlab.skillbox.ru/danil_toropov/java_web_development_final_project.git",
-    "second": "a60822fd-6f19-469e-ab2e-5b5e4f69129d"
+}</component>
+  <component name="GitLabMergeRequestsSettings">{
+  &quot;selectedUrlAndAccountId&quot;: {
+    &quot;first&quot;: &quot;https://gitlab.skillbox.ru/danil_toropov/java_web_development_final_project.git&quot;,
+    &quot;second&quot;: &quot;a60822fd-6f19-469e-ab2e-5b5e4f69129d&quot;
   }
-}]]></component>
-  <component name="ProjectColorInfo"><![CDATA[{
-  "associatedIndex": 8
-}]]></component>
+}</component>
+  <component name="ProjectColorInfo">{
+  &quot;associatedIndex&quot;: 8
+}</component>
   <component name="ProjectId" id="36L64cAWvLpnij8IXl9bE7LqbHx" />
   <component name="ProjectViewState">
     <option name="hideEmptyMiddlePackages" value="true" />
     <option name="showLibraryContents" value="true" />
   </component>
-  <component name="PropertiesComponent"><![CDATA[{
-  "keyToString": {
-    "RunOnceActivity.ShowReadmeOnStart": "true",
-    "RunOnceActivity.git.unshallow": "true",
-    "git-widget-placeholder": "develop",
-    "kotlin-language-version-configured": "true"
+  <component name="PropertiesComponent">{
+  &quot;keyToString&quot;: {
+    &quot;RunOnceActivity.ShowReadmeOnStart&quot;: &quot;true&quot;,
+    &quot;RunOnceActivity.git.unshallow&quot;: &quot;true&quot;,
+    &quot;git-widget-placeholder&quot;: &quot;develop&quot;,
+    &quot;kotlin-language-version-configured&quot;: &quot;true&quot;
   }
-}]]></component>
+}</component>
   <component name="RunManager">
     <configuration default="true" type="JetRunConfigurationType">
       <module name="booking-ui" />

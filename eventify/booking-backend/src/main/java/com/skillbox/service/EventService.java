@@ -10,6 +10,7 @@ import com.skillbox.web.dto.event.EventResponse;
 import com.skillbox.web.dto.event.UpsertEventRequest;
 import com.skillbox.web.exception.EventNotFoundException;
 import com.skillbox.web.exception.EventStartInPastException;
+import com.skillbox.web.exception.InsufficientTotalTicketsException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.context.ApplicationEventPublisher;
 import org.springframework.data.domain.Page;
@@ -75,9 +76,18 @@ public class EventService {
         EventEntity eventEntity = eventRepository.findById(eventId)
                 .orElseThrow(() -> new EventNotFoundException("Ошибка! Мероприятие не найдено!"));
 
-        eventEntity.updateFrom(request);
+        int numberOfTicketsBooked = eventEntity.getTotalTickets() - eventEntity.getAvailableTickets();
 
-        return eventMapper.toDto(eventEntity);
+        if(request.getTotalTickets() < numberOfTicketsBooked){
+            throw new InsufficientTotalTicketsException("Нельзя установить " + request.getTotalTickets() +
+                    ", так как уже забронировано " + numberOfTicketsBooked + " билетов");
+        }
+
+        int availableTickets = request.getTotalTickets() - numberOfTicketsBooked;
+
+        eventEntity.updateFrom(request,availableTickets);
+
+        return eventMapper.toDto(eventRepository.save(eventEntity));
     }
 
     @Transactional

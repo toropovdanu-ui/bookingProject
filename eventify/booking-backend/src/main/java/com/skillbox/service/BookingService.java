@@ -91,7 +91,8 @@ public class BookingService {
         int availableTickets = eventEntity.getAvailableTickets() - bookingRequest.getTicketCount();
 
         if(availableTickets < 0){
-            throw new InsufficientActivitiesException("Билеты не мероприятия больше не доступны");
+            throw new InsufficientActivitiesException("Нельзя забронировать " + bookingRequest.getTicketCount() +
+                    " билетов: доступно только " + eventEntity.getAvailableTickets());
         }
 
         eventRepository.reduceAvailableTickets(eventEntity.getId(),bookingRequest.getTicketCount());
@@ -100,6 +101,7 @@ public class BookingService {
                 .orElseThrow();
 
         BookingEntity bookingEntity = getBookingEntity(event, userEntity, bookingRequest);
+
         return getBookingDto(bookingRepository.save(bookingEntity));
     }
 
@@ -113,7 +115,7 @@ public class BookingService {
         int delta = oldCount - newCount;
 
         EventEntity event = booking.getEvent();
-        if (event.getAvailableTickets() < delta) {
+        if (event.getAvailableTickets() + delta < 0) {
             throw new InsufficientActivitiesException("Недостаточно доступных билетов");
         }
 

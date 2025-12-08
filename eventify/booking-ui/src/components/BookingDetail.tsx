@@ -1,8 +1,8 @@
 import React, { useEffect, useState, useCallback } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { Booking } from '../types';
+import { Booking, BookingUpdateRequest } from '../types';
 import { apiService } from '../services/api';
-import { Calendar, Users, ArrowLeft, Clock, Mail } from 'lucide-react';
+import { Calendar, Users, ArrowLeft, Clock, Mail, Edit } from 'lucide-react';
 import toast from 'react-hot-toast';
 
 const BookingDetail: React.FC = () => {
@@ -10,6 +10,8 @@ const BookingDetail: React.FC = () => {
   const navigate = useNavigate();
   const [booking, setBooking] = useState<Booking | null>(null);
   const [loading, setLoading] = useState(true);
+  const [showEditModal, setShowEditModal] = useState(false);
+  const [newTicketCount, setNewTicketCount] = useState(1);
 
   const loadBooking = useCallback(async () => {
     if (!id) return;
@@ -39,6 +41,45 @@ const BookingDetail: React.FC = () => {
       hour: '2-digit',
       minute: '2-digit',
     });
+  };
+
+  const handleEditBooking = () => {
+    if (!booking) return;
+    setNewTicketCount(booking.ticketCount);
+    setShowEditModal(true);
+  };
+
+  const handleConfirmEdit = async () => {
+    if (!booking) return;
+
+    if (newTicketCount === booking.ticketCount) {
+      setShowEditModal(false);
+      return;
+    }
+
+    if (newTicketCount < 1 || newTicketCount > 10) {
+      toast.error('Количество билетов должно быть от 1 до 10');
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const updateRequest: BookingUpdateRequest = {
+        ticketCount: newTicketCount,
+      };
+      
+      await apiService.updateBooking(booking.id, updateRequest);
+      
+      toast.success('Количество билетов успешно обновлено!');
+      setShowEditModal(false);
+      loadBooking();
+    } catch (error: any) {
+      console.error('Error updating booking:', error);
+      const message = error.response?.data?.message || 'Ошибка при обновлении бронирования';
+      toast.error(message);
+    } finally {
+      setLoading(false);
+    }
   };
 
   if (loading) {
@@ -146,10 +187,70 @@ const BookingDetail: React.FC = () => {
           </div>
         </div>
       </div>
+
+      {/* Модальное окно для изменения количества билетов */}
+      {showEditModal && (
+        <div className="fixed inset-0 bg-gray-600 bg-opacity-50 overflow-y-auto h-full w-full z-50">
+          <div className="relative top-20 mx-auto p-5 border w-96 shadow-lg rounded-md bg-white">
+            <div className="mt-3">
+              <h3 className="text-lg font-medium text-gray-900 mb-4">
+                Изменить количество билетов
+              </h3>
+              
+              <p className="text-sm text-gray-600 mb-4">
+                Текущее количество: <strong>{booking.ticketCount}</strong> билетов
+              </p>
+              <p className="text-sm text-gray-600 mb-4">
+                Максимально можно забронировать: <strong>10</strong> билетов
+              </p>
+              
+              <div className="mb-4">
+                <label htmlFor="ticketCount" className="block text-sm font-medium text-gray-700 mb-2">
+                  Новое количество билетов:
+                </label>
+                <input
+                  type="number"
+                  id="ticketCount"
+                  min="1"
+                  max="10"
+                  value={newTicketCount}
+                  onChange={(e) => {
+                    const value = parseInt(e.target.value);
+                    if (value >= 1 && value <= 10) {
+                      setNewTicketCount(value);
+                    }
+                  }}
+                  className="w-full border border-gray-300 rounded-md px-3 py-2 text-sm focus:outline-none focus:ring-2 focus:ring-indigo-500"
+                />
+              </div>
+              
+              <div className="flex justify-end space-x-3">
+                <button
+                  onClick={() => {
+                    setShowEditModal(false);
+                  }}
+                  className="px-4 py-2 text-sm font-medium text-gray-700 bg-gray-100 rounded-md hover:bg-gray-200"
+                >
+                  Отмена
+                </button>
+                <button
+                  onClick={handleConfirmEdit}
+                  disabled={loading || newTicketCount === booking.ticketCount}
+                  className="px-4 py-2 text-sm font-medium text-white bg-indigo-600 rounded-md hover:bg-indigo-700 disabled:opacity-50"
+                >
+                  {loading ? 'Обновление...' : 'Сохранить'}
+                </button>
+              </div>
+            </div>
+          </div>
+        </div>
+      )}
     </div>
   );
 };
 
 export default BookingDetail;
+
+
 
 

@@ -54,7 +54,7 @@ public class NotificationService {
                         return null;
                     });
                 } catch (MessagingException e) {
-                    throw new RuntimeException(e);
+                    log.error("sendUpcomingEventNotifications exception");
                 }
             });
         }
@@ -76,7 +76,7 @@ public class NotificationService {
 
                 javaMailSender.send(mimeMessage);
             } catch (MessagingException e) {
-                throw new RuntimeException(e);
+                log.error("sendCreateEventNotifications exception");
             }
         }
     }
@@ -94,7 +94,7 @@ public class NotificationService {
 
             javaMailSender.send(message);
         }catch (MessagingException e){
-            throw new RuntimeException(e);
+            log.error("sendBookingConfirmedNotification exception");
         }
     }
 

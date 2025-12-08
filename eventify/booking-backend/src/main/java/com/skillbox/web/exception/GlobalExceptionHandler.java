@@ -6,6 +6,7 @@ import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 
+import java.nio.file.AccessDeniedException;
 import java.util.concurrent.ThreadPoolExecutor;
 
 @ControllerAdvice
@@ -101,5 +102,23 @@ public class GlobalExceptionHandler {
                         )
                 );
 
+    }
+
+    @ExceptionHandler(AccessDeniedException.class)
+    public ResponseEntity<ApiError> accessDeniedException(AccessDeniedException e){
+        return ResponseEntity.status(HttpStatus.UNAUTHORIZED)
+                .body(
+                        new ApiError("UNAUTHORIZED",
+                                "Авторизуйтесь еще раз")
+                );
+    }
+
+    @ExceptionHandler(InsufficientTotalTicketsException.class)
+    public ResponseEntity<ApiError> insufficientTotalTicketsException(InsufficientTotalTicketsException e){
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST)
+                .body(
+                        new ApiError("INSUFFICIENT_TOTAL_TICKETS",
+                                e.getMessage())
+                );
     }
 }

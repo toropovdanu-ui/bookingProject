@@ -1,7 +1,8 @@
 package com.skillbox.security;
 
-import com.skillbox.entity.RoleType;
 import com.skillbox.entity.UserEntity;
+import lombok.AllArgsConstructor;
+import lombok.NoArgsConstructor;
 import lombok.RequiredArgsConstructor;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
@@ -12,7 +13,6 @@ import java.util.Collection;
 @RequiredArgsConstructor
 public class AppUserDetails implements UserDetails {
     private final UserEntity userEntity;
-
 
     public Long getUserId(){
         return userEntity.getId();

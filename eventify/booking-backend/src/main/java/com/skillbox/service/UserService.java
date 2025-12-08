@@ -14,6 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.time.Duration;
 import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 
 @Service
 @RequiredArgsConstructor
@@ -43,6 +44,7 @@ public class UserService {
 
         NotificationSettings notificationSettings = notificationMapper.toEntity(request);
         userEntity.setNotificationSettings(notificationSettings);
+        userRepository.save(userEntity);
 
         return notificationMapper.toDto(notificationSettings);
     }
@@ -55,22 +57,35 @@ public class UserService {
         userEntity.setNotificationSettings(new NotificationSettings());
 
         userEntity.getBookings().forEach(booking->{
-            Instant startEvent = booking.getEvent().getDateTime();
-            Instant reminderAt = startEvent.minus(
-                    Duration.ofHours(
-                            userEntity.getNotificationSettings().getNotifyBeforeHours()
-                    )
-            );
+            if(!booking.isReminderSent()){
+                Instant startEvent = booking.getEvent().getDateTime();
+                Instant reminderAt = startEvent.minus(
+                        Duration.ofHours(
+                                userEntity.getNotificationSettings().getNotifyBeforeHours()
+                        )
+                );
 
-            booking.setReminderAt(reminderAt);
+                booking.setReminderAt(reminderAt);
+            }
         });
     }
 
     private void checkOnNotifyUpcoming(UpdateNotificationSettingsRequest request,UserEntity userEntity) {
-        if(!request.getNotifyUpcoming()){
-            userEntity.getBookings().forEach(entity->{
-                entity.setReminderSent(true);
-            });
-        }
+        userEntity.getBookings().forEach(bookEntity->{
+
+            if(!request.getNotifyUpcoming()){
+                bookEntity.setReminderSent(true);
+                bookEntity.setReminderAt(null);
+                return;
+            }
+
+            Instant dateTime = bookEntity.getEvent().getDateTime();
+            Instant delta = dateTime.minus(request.getNotifyBeforeHours().longValue(), ChronoUnit.HOURS);
+
+            if(delta.isAfter(Instant.now()) && request.getNotifyUpcoming()){
+                bookEntity.setReminderSent(false);
+                bookEntity.setReminderAt(delta);
+            }
+        });
     }
 }

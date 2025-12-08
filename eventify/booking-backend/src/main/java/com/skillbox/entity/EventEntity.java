@@ -49,11 +49,12 @@ public class EventEntity {
     @Column(name = "updated_at")
     private Instant updatedAt;
 
-    public void updateFrom(UpsertEventRequest request){
+    public void updateFrom(UpsertEventRequest request, int availableTickets){
         this.title = request.getTitle();
         this.description = request.getDescription();
         this.dateTime = DateTimeUtils.parseDate(request.getDateTime());
         this.totalTickets = request.getTotalTickets();
+        this.availableTickets = availableTickets;
         this.coverUrl = request.getCoverUrl();
         this.updatedAt = Instant.now();
     }

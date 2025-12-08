@@ -64,15 +64,16 @@ const NotificationSettings: React.FC = () => {
   };
 
   const handleLinkTelegram = async () => {
-    try {
-      const code = await apiService.linkTelegram();
-      setTelegramCode(code);
-      toast.success('Код для привязки Telegram получен');
-    } catch (error) {
-      console.error('Error linking telegram:', error);
-      toast.error('Ошибка при получении кода для Telegram');
-    }
-  };
+      try {
+        const code = await apiService.linkTelegram();
+        setTelegramCode(code);
+        toast.success('Код для привязки Telegram получен');
+      } catch (error) {
+        console.error('Error linking telegram:', error);
+        toast.error('Ошибка при получении кода для Telegram');
+      }
+    };
+
 
   const handlePreferenceChange = (key: keyof NotificationPreferences, value: any) => {
     setPreferences(prev => ({
@@ -110,7 +111,7 @@ const NotificationSettings: React.FC = () => {
           {/* Email Notifications */}
           <div>
             <h3 className="text-md font-medium text-gray-900 mb-4">Email уведомления</h3>
-            
+
             <div className="space-y-4">
               <div className="flex items-center justify-between">
                 <div>
@@ -180,12 +181,12 @@ const NotificationSettings: React.FC = () => {
               <MessageCircle className="w-5 h-5 mr-2" />
               Интеграция с Telegram
             </h3>
-            
+
             <div className="space-y-4">
               <p className="text-sm text-gray-600">
                 Привяжите ваш Telegram аккаунт для получения уведомлений в мессенджере
               </p>
-              
+
               <button
                 onClick={handleLinkTelegram}
                 className="inline-flex items-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500"
@@ -216,7 +217,7 @@ const NotificationSettings: React.FC = () => {
             <Trash2 className="w-4 h-4 mr-2" />
             Сбросить настройки
           </button>
-          
+
           <button
             onClick={handleSave}
             disabled={saving}
@@ -231,4 +232,4 @@ const NotificationSettings: React.FC = () => {
   );
 };
 
-export default NotificationSettings; 
+export default NotificationSettings;
