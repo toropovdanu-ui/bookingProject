@@ -38,25 +38,29 @@ public class NotificationService {
     public void sendUpcomingEventNotifications(List<BookingEntity> bookings){
         for(BookingEntity booking:bookings){
             executor.execute(()->{
-                try {
-                    MimeMessage message = javaMailSender.createMimeMessage();
-                    MimeMessageHelper helper = new MimeMessageHelper(message, true);
-
-                    helper.setFrom(from);
-                    helper.setTo(booking.getUser().getEmail());
-                    helper.setSubject("Уведомление о предстоящем мероприятии");
-                    helper.setText(getText(booking.getEvent()));
-
-                    javaMailSender.send(message);
-
-                    new TransactionTemplate(transactionManager).execute(status -> {
-                        bookingRepository.updateReminderSentToTrue(booking.getId());
-                        return null;
-                    });
-                } catch (MessagingException e) {
-                    log.error("sendUpcomingEventNotifications exception");
-                }
+                processSingleBookingReminder(booking);
             });
+        }
+    }
+
+    public void processSingleBookingReminder(BookingEntity booking){
+        try {
+            MimeMessage message = javaMailSender.createMimeMessage();
+            MimeMessageHelper helper = new MimeMessageHelper(message);
+
+            helper.setFrom(from);
+            helper.setTo(booking.getUser().getEmail());
+            helper.setSubject("Уведомление о предстоящем мероприятии");
+            helper.setText(getText(booking.getEvent()));
+
+            javaMailSender.send(message);
+
+            new TransactionTemplate(transactionManager).execute(status -> {
+                bookingRepository.updateReminderSentToTrue(booking.getId());
+                return null;
+            });
+        } catch (MessagingException e) {
+            log.error("sendUpcomingEventNotifications exception");
         }
     }
 

@@ -42,5 +42,5 @@ public interface BookingRepository extends JpaRepository<BookingEntity,Long>, Jp
     SET reminderSent = true
     WHERE b.id = :bookingId
     """)
-    int updateReminderSentToTrue(@Param("bookingId") Long bookingId);
+    void updateReminderSentToTrue(@Param("bookingId") Long bookingId);
 }
