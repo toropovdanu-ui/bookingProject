@@ -3,6 +3,7 @@ package com.skillbox.service;
 import com.skillbox.entity.BookingEntity;
 import com.skillbox.entity.EventEntity;
 import com.skillbox.entity.UserEntity;
+import com.skillbox.event.BookingConfirmedEvent;
 import com.skillbox.event.EventCreatedEvent;
 import com.skillbox.repository.BookingRepository;
 import com.skillbox.repository.UserRepository;
@@ -123,5 +124,24 @@ public class NotificationServiceTest {
                 .isEqualTo("Уведомляем вас, что было создано новое мероприятие: test");
     }
 
-    void
+    @Test
+    void sendBookingConfirmedNotification_whenAdminConfirmedBooking_shouldSendNotification() throws MessagingException, IOException {
+        //given
+        MimeMessage mimeMessage = new MimeMessage(Session.getDefaultInstance(new Properties()));
+
+        when(javaMailSender.createMimeMessage()).thenReturn(mimeMessage);
+        doNothing().when(javaMailSender).send(any(MimeMessage.class));
+
+        //when
+        notificationService.sendBookingConfirmedNotification(new BookingConfirmedEvent("example@gmail.com","test"));
+
+        //assert
+        InternetAddress recipient = (InternetAddress) mimeMessage.getRecipients(Message.RecipientType.TO)[0];
+
+        assertThat(mimeMessage.getSubject()).isEqualTo("Ваше бронирование на мероприятие test подтверждено");
+        assertThat(mimeMessage.getFrom()[0].toString()).isEqualTo(email);
+        assertThat(recipient.getAddress()).isEqualTo("example@gmail.com");
+        assertThat((String) mimeMessage.getContent())
+                .isEqualTo("Ваше бронирование на мероприятие test подтвердил администратор");
+    }
 }
